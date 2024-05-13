@@ -4,7 +4,8 @@ import useGameLogic from "../../../hooks/useGameLogic";
 
 const GameDisplay = () => {
   const {
-    currentWord,
+    currentJapaneseWord,
+    currentRomanWord,
     currentPosition,
     gameOver,
     gameStarted,
@@ -32,7 +33,8 @@ const GameDisplay = () => {
         </>
         ) : !gameOver ? (
           <div style={{ fontSize: "24px" }}>
-            {currentWord.split("").map((char, i) => (
+            <span>{currentJapaneseWord}</span><br />
+            {currentRomanWord.split("").map((char, i) => (
               <span
                 key={i}
                 style={{ color: i < currentPosition ? "orange" : "black" }}
