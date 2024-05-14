@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import parseSentence from "@/app/data/romanTypingParseDictionary";
 
 const japaneseWordsList: string[] = []; // 初期単語リスト
-const romanWordsList: string[] = []; // 初期単語リスト
+const romanWordsList: string[][][] = []; // 初期単語リスト
+const initRomanWordsList: string[] = []; // 初期単語リスト
 const initialTime = 10; // 初期時間
 
 const JapaneseSentences = [
@@ -26,9 +27,15 @@ const JapaneseSentences = [
   },
 ];
 // JapaneseSentencesのhiraganaをparseして、romanWordsListに追加する
-JapaneseSentences.forEach((item) => {
+JapaneseSentences.forEach((item, i) => {
   japaneseWordsList.push(item.sentence);
-  romanWordsList.push(parseSentence(item.hiragana));
+  const parsed = parseSentence(item.hiragana);
+  const word: string[] = [];
+  parsed.forEach((item) => {
+    const char: string = item[0];
+    word.push(char);
+  })
+  initRomanWordsList.push(word.join(''));
 });
 
 const useGameLogic = () => {
@@ -138,7 +145,7 @@ const useGameLogic = () => {
   useEffect(() => {
     if (!gameStarted) {
       setJapaneseWords([...japaneseWordsList]);
-      setRomanWords([...romanWordsList]);
+      setRomanWords([...initRomanWordsList]);
     }
   }, [gameStarted]);
 
@@ -152,7 +159,7 @@ const useGameLogic = () => {
     setGameStarted(false);
     setGameOver(false);
     setJapaneseWords([...japaneseWordsList]);
-    setRomanWords([...romanWordsList]); // ゲームを再開する準備として単語リストをリセット
+    setRomanWords([...initRomanWordsList]); // ゲームを再開する準備として単語リストをリセット
   };
 
   //
@@ -171,9 +178,9 @@ const useGameLogic = () => {
   // ゲームを開始する(初期化)
   const startGame = () => {
     setJapaneseWords(japaneseWordsList.slice());
-    setRomanWords(romanWordsList.slice());
+    setRomanWords(initRomanWordsList.slice());
     setCurrentJapaneseWord(japaneseWordsList[0]);
-    setCurrentRomanWord(romanWordsList[0]);
+    setCurrentRomanWord(initRomanWordsList[0]);
     setJapaneseWords(japaneseWords.slice(1));
     setRomanWords(romanWords.slice(1));
     setCurrentPosition(0);
@@ -194,7 +201,7 @@ const useGameLogic = () => {
     setGameStarted(false);
     setGameOver(false);
     setJapaneseWords([...japaneseWordsList]);
-    setRomanWords([...romanWordsList]); // ゲームを再開する準備として単語リストをリセット
+    setRomanWords([...initRomanWordsList]); // ゲームを再開する準備として単語リストをリセット
   };
 
   // 次の単語を表示する
