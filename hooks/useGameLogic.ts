@@ -9,28 +9,27 @@ const initialTime = 10; // 初期時間
 
 const JapaneseSentences = [
   {
-    sentence: 'んぎょこんさちわ',
-    hiragana: 'んぎょこんさちわ',
+    sentence: "んぎょこんさちわ",
+    hiragana: "んぎょこんさちわ",
   },
   {
-    sentence: 'るんるん',
-    hiragana: 'るんるん',
+    sentence: "るんるん",
+    hiragana: "るんるん",
   },
   {
-    sentence: 'タバコがやめられない',
-    hiragana: 'たばこがやめられない',
+    sentence: "タバコがやめられない",
+    hiragana: "たばこがやめられない",
   },
   {
-    sentence: '洗濯機が壊れた',
-    hiragana: 'せんたくきがこわれた',
-  }
-]
+    sentence: "洗濯機が壊れた",
+    hiragana: "せんたくきがこわれた",
+  },
+];
 // JapaneseSentencesのhiraganaをparseして、romanWordsListに追加する
-JapaneseSentences.forEach(item => {
-  japaneseWordsList.push(item.sentence)
-  romanWordsList.push(parseSentence(item.hiragana))
-})
-
+JapaneseSentences.forEach((item) => {
+  japaneseWordsList.push(item.sentence);
+  romanWordsList.push(parseSentence(item.hiragana));
+});
 
 const useGameLogic = () => {
   const [japaneseWords, setJapaneseWords] = useState<string[]>([]);
@@ -71,7 +70,6 @@ const useGameLogic = () => {
     }
   }, [completed]);
 
-
   // キーボードイベントを処理する
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -100,12 +98,18 @@ const useGameLogic = () => {
       if (event.key === "Escape") {
         readyGame();
       }
-
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentPosition, currentJapaneseWord, currentRomanWord, gameOver, gameStarted, mistakeMade]);
+  }, [
+    currentPosition,
+    currentJapaneseWord,
+    currentRomanWord,
+    gameOver,
+    gameStarted,
+    mistakeMade,
+  ]);
 
   // ゲームの残り時間を管理する
   useEffect(() => {
@@ -141,7 +145,7 @@ const useGameLogic = () => {
   // スタート画面を表示する
   const goToStartScreen = () => {
     setStartScreen(true);
-  }
+  };
   // 初期画面に戻る
   const goToInitScreen = () => {
     setStartScreen(false);
@@ -149,9 +153,9 @@ const useGameLogic = () => {
     setGameOver(false);
     setJapaneseWords([...japaneseWordsList]);
     setRomanWords([...romanWordsList]); // ゲームを再開する準備として単語リストをリセット
-  }
+  };
 
-  // 
+  //
   useEffect(() => {
     const handleEnterOrSpace = (event: KeyboardEvent) => {
       if (!startScreen && gameStarted) return;
@@ -164,13 +168,13 @@ const useGameLogic = () => {
     return () => window.removeEventListener("keydown", handleEnterOrSpace);
   }, [startScreen, gameStarted]);
 
-
   // ゲームを開始する(初期化)
   const startGame = () => {
     setJapaneseWords(japaneseWordsList.slice());
     setRomanWords(romanWordsList.slice());
     setCurrentJapaneseWord(japaneseWordsList[0]);
     setCurrentRomanWord(romanWordsList[0]);
+    setJapaneseWords(japaneseWords.slice(1));
     setRomanWords(romanWords.slice(1));
     setCurrentPosition(0);
     setCompleted(false);
