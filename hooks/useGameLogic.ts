@@ -30,9 +30,13 @@ const JapaneseSentences = [
 JapaneseSentences.forEach((item, i) => {
   japaneseWordsList.push(item.sentence);
   const parsed = parseSentence(item.hiragana);
+  romanWordsList.push(parsed);
+});
+// 初期値の設定
+romanWordsList.forEach((item, i) => {
   const word: string[] = [];
-  parsed.forEach((item) => {
-    const char: string = item[0];
+  item.forEach((el, j) => {
+    const char: string = el[0];
     word.push(char);
   })
   initRomanWordsList.push(word.join(''));
