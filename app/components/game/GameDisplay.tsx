@@ -22,7 +22,7 @@ const GameDisplay = () => {
 
   return (
     <div>
-      <h1>タイピングゲーム</h1>
+      <h1>タイピングゲーム!</h1>
 
       {!startScreen ? (
         <button onClick={goToStartScreen}>Start Game</button>
@@ -31,29 +31,31 @@ const GameDisplay = () => {
           <p>スペースかEnterキーを押すとスタートします</p>
           <p>ESCキーを押すとすぐにタイピングをやり直すことができます。</p>
         </>
-        ) : !gameOver ? (
-          <div style={{ fontSize: "24px" }}>
-            <span>{currentJapaneseWord}</span><br />
-            {currentRomanWord.split("").map((char, i) => (
-              <span
-                key={i}
-                style={{ color: i < currentPosition ? "orange" : "black" }}
-              >
-                {char}
-              </span>
-            ))}
-            <p>残り時間: {limitTime} 秒</p>
-          </div>
-        ) : (
-          <div>
-            <p>ゲーム終了！一服しよう！</p>
-            <p>吸ったタバコ: {totalWordsTyped}本</p>
-            <p>正しく打ったキーの数: {trueTotalTypes}回</p>
-            <p>平均キータイプ数: {averageTypes}</p> 
-            <p>ミスタイプ数: {mistakeTotalTypes}回</p>
-            <button onClick={readyGame}>再びプレイ</button><br />
-            <button onClick={goToInitScreen}>戻る</button>
-          </div>
+      ) : !gameOver ? (
+        <div style={{ fontSize: "24px" }}>
+          <span>{currentJapaneseWord}</span>
+          <br />
+          {currentRomanWord.split("").map((char, i) => (
+            <span
+              key={i}
+              style={{ color: i < currentPosition ? "orange" : "black" }}
+            >
+              {char}
+            </span>
+          ))}
+          <p>残り時間: {limitTime} 秒</p>
+        </div>
+      ) : (
+        <div>
+          <p>ゲーム終了！一服しよう！</p>
+          <p>吸ったタバコ: {totalWordsTyped}本</p>
+          <p>正しく打ったキーの数: {trueTotalTypes}回</p>
+          <p>平均キータイプ数: {averageTypes}</p>
+          <p>ミスタイプ数: {mistakeTotalTypes}回</p>
+          <button onClick={readyGame}>再びプレイ</button>
+          <br />
+          <button onClick={goToInitScreen}>戻る</button>
+        </div>
       )}
     </div>
   );
