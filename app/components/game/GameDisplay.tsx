@@ -1,5 +1,5 @@
 // components/Game.tsx
-import React, { useState } from "react";
+import React from "react";
 import useGameLogic from "../../../hooks/useGameLogic";
 
 const GameDisplay = () => {
@@ -18,6 +18,7 @@ const GameDisplay = () => {
     startScreen,
     goToStartScreen,
     goToInitScreen,
+    currentInput, // currentInputをここで取得
   } = useGameLogic();
 
   return (
@@ -35,24 +36,26 @@ const GameDisplay = () => {
         <div style={{ fontSize: "24px" }}>
           <span>{currentJapaneseWord}</span>
           <br />
-          {currentRomanWord.map((charOptions, i) => (
-            <span key={i}>
-              {charOptions[0].split("").map((char, j) => (
+          {currentRomanWord.flatMap((charOptions, index) => {
+            return charOptions[0].split("").map((char, i) => {
+              const isCorrect =
+                index < currentPosition ||
+                (index === currentPosition && i < currentInput.length);
+              return (
                 <span
-                  key={j}
-                  style={{ color: j < currentPosition ? "orange" : "black" }}
+                  key={`${index}-${i}`}
+                  style={{ color: isCorrect ? "orange" : "black" }}
                 >
                   {char}
                 </span>
-              ))}
-              {/* charOptionsは複数のオプションを含む配列 */}
-            </span>
-          ))}
+              );
+            });
+          })}
           <p>残り時間: {limitTime} 秒</p>
         </div>
       ) : (
         <div>
-          <p>ゲーム終了！一服しよう！！</p>
+          <p>ゲーム終了！一服しよう！</p>
           <p>吸ったタバコ: {totalWordsTyped}本</p>
           <p>正しく打ったキーの数: {trueTotalTypes}回</p>
           <p>平均キータイプ数: {averageTypes}</p>

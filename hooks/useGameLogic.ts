@@ -4,8 +4,8 @@ import parseSentence from "@/app/data/romanTypingParseDictionary";
 
 const japaneseWordsList: string[] = []; // 初期単語リスト
 const romanWordsList: string[][][] = []; // 初期単語リスト
-const initRomanWordsList: string[] = []; // 初期単語リスト
-const initialTime = 10; // 初期時間
+const initRomanWordsList: string[][] = []; // 初期単語リスト
+const initialTime = 100; // 初期時間
 
 const JapaneseSentences = [
   {
@@ -23,7 +23,7 @@ JapaneseSentences.forEach((item, i) => {
   const parsed = parseSentence(item.hiragana);
   romanWordsList.push(parsed);
 });
-
+console.log(romanWordsList);
 // 初期値の設定
 romanWordsList.forEach((item, i) => {
   const word: string[] = [];
@@ -31,7 +31,8 @@ romanWordsList.forEach((item, i) => {
     const char: string = el[0];
     word.push(char);
   });
-  initRomanWordsList.push(word.join(""));
+  initRomanWordsList.push(word);
+  console.log(initRomanWordsList);
 });
 
 const useGameLogic = () => {
@@ -71,6 +72,8 @@ const useGameLogic = () => {
   useEffect(() => {
     if (completed) {
       setTotalWordsTyped((prevTotal) => prevTotal + 1);
+      setCompleted(false);
+      startNextWord();
     }
   }, [completed]);
 
@@ -79,14 +82,8 @@ const useGameLogic = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (gameOver || !currentRomanWord || !gameStarted) return;
 
-      console.log("Key pressed:", event.key);
-      console.log("Current Roman Word:", currentRomanWord);
-      console.log("Current Position:", currentPosition);
-
       const nextCharOptions = currentRomanWord[currentPosition];
       const newInput = currentInput + event.key;
-      console.log("Next Char Options:", nextCharOptions);
-      console.log("New Input:", newInput);
 
       if (nextCharOptions.some((option) => option.startsWith(newInput))) {
         setCurrentInput(newInput);
@@ -148,11 +145,18 @@ const useGameLogic = () => {
   }, [limitTime, gameStarted, gameOver]);
 
   // 単語が正しく入力されたときに次の単語を表示する
-  useEffect(() => {
-    if (completed && gameStarted) {
-      startNextWord();
+  const startNextWord = () => {
+    if (japaneseWords.length > 0) {
+      setCurrentJapaneseWord(japaneseWords[0]);
+      setCurrentRomanWord(romanWords[0]);
+      setJapaneseWords(japaneseWords.slice(1));
+      setRomanWords(romanWords.slice(1));
+      setCurrentPosition(0);
+      setMistakeMade(false);
+    } else {
+      setGameOver(true);
     }
-  }, [completed, gameStarted]);
+  };
 
   // ゲームが開始されたときに単語リストをリセットする
   useEffect(() => {
@@ -191,12 +195,13 @@ const useGameLogic = () => {
   // ゲームを開始する(初期化)
   const startGame = () => {
     setJapaneseWords(japaneseWordsList.slice());
-    setRomanWords(romanWordsList.slice()); // romanWordsListはstring[][][]型
+    setRomanWords(romanWordsList.slice());
     setCurrentJapaneseWord(japaneseWordsList[0]);
-    setCurrentRomanWord(romanWordsList[0]); // romanWordsListの要素はstring[][]型
+    setCurrentRomanWord(romanWordsList[0]);
     setJapaneseWords(japaneseWords.slice(1));
     setRomanWords(romanWords.slice(1));
     setCurrentPosition(0);
+    setCurrentInput(""); // ゲーム開始時にリセット
     setCompleted(false);
     setGameOver(false);
     setGameStarted(true);
@@ -214,22 +219,7 @@ const useGameLogic = () => {
     setGameStarted(false);
     setGameOver(false);
     setJapaneseWords([...japaneseWordsList]);
-    setRomanWords([...romanWordsList]); // romanWordsListはstring[][][]型
-  };
-
-  // 次の単語を表示する
-  const startNextWord = () => {
-    if (romanWords.length > 0) {
-      setCurrentJapaneseWord(japaneseWords[0]);
-      setCurrentRomanWord(romanWords[0]); // romanWordsの要素はstring[][]型
-      setJapaneseWords(japaneseWords.slice(1));
-      setRomanWords(romanWords.slice(1));
-      setCurrentPosition(0);
-      setCompleted(false);
-      setMistakeMade(false);
-    } else {
-      setGameOver(true);
-    }
+    setRomanWords([...romanWordsList]); // ゲームを再開する準備として単語リストをリセット
   };
 
   return {
@@ -248,6 +238,7 @@ const useGameLogic = () => {
     startScreen,
     goToStartScreen,
     goToInitScreen,
+    currentInput, // currentInputをここで返す
   };
 };
 
