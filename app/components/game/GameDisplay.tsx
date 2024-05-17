@@ -22,7 +22,7 @@ const GameDisplay = () => {
 
   return (
     <div>
-      <h1>タイピングゲーム!</h1>
+      <h1>タイピングゲーム</h1>
 
       {!startScreen ? (
         <button onClick={goToStartScreen}>Start Game</button>
@@ -35,19 +35,24 @@ const GameDisplay = () => {
         <div style={{ fontSize: "24px" }}>
           <span>{currentJapaneseWord}</span>
           <br />
-          {currentRomanWord.split("").map((char, i) => (
-            <span
-              key={i}
-              style={{ color: i < currentPosition ? "orange" : "black" }}
-            >
-              {char}
+          {currentRomanWord.map((charOptions, i) => (
+            <span key={i}>
+              {charOptions[0].split("").map((char, j) => (
+                <span
+                  key={j}
+                  style={{ color: j < currentPosition ? "orange" : "black" }}
+                >
+                  {char}
+                </span>
+              ))}
+              {/* charOptionsは複数のオプションを含む配列 */}
             </span>
           ))}
           <p>残り時間: {limitTime} 秒</p>
         </div>
       ) : (
         <div>
-          <p>ゲーム終了！一服しよう！</p>
+          <p>ゲーム終了！一服しよう！！</p>
           <p>吸ったタバコ: {totalWordsTyped}本</p>
           <p>正しく打ったキーの数: {trueTotalTypes}回</p>
           <p>平均キータイプ数: {averageTypes}</p>
@@ -60,4 +65,5 @@ const GameDisplay = () => {
     </div>
   );
 };
+
 export default GameDisplay;
