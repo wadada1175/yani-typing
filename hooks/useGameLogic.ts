@@ -5,7 +5,7 @@ import parseSentence from "@/app/data/romanTypingParseDictionary";
 const japaneseWordsList: string[] = []; // 初期単語リスト
 const romanWordsList: string[][][] = []; // 初期単語リスト
 const initRomanWordsList: string[][] = []; // 初期単語リスト
-const initialTime = 100; // 初期時間
+const initialTime = 10; // 初期時間
 
 const JapaneseSentences = [
   {

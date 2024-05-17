@@ -1,4 +1,3 @@
-// components/Game.tsx
 import React from "react";
 import useGameLogic from "../../../hooks/useGameLogic";
 
@@ -21,6 +20,23 @@ const GameDisplay = () => {
     currentInput, // currentInputをここで取得
   } = useGameLogic();
 
+  // currentRomanWordの表示をユーザーの入力に基づいて動的に変更
+  const displayedRomanWord = currentRomanWord.flatMap((charOptions, index) => {
+    const optionToShow =
+      index < currentPosition
+        ? charOptions[0]
+        : index === currentPosition && currentInput.length > 0
+        ? charOptions.find((option) => option.startsWith(currentInput)) ||
+          charOptions[0]
+        : charOptions[0];
+    return optionToShow.split("").map((char, i) => {
+      const isCorrect =
+        index < currentPosition ||
+        (index === currentPosition && i < currentInput.length);
+      return { char, isCorrect };
+    });
+  });
+
   return (
     <div>
       <h1>タイピングゲーム</h1>
@@ -36,21 +52,11 @@ const GameDisplay = () => {
         <div style={{ fontSize: "24px" }}>
           <span>{currentJapaneseWord}</span>
           <br />
-          {currentRomanWord.flatMap((charOptions, index) => {
-            return charOptions[0].split("").map((char, i) => {
-              const isCorrect =
-                index < currentPosition ||
-                (index === currentPosition && i < currentInput.length);
-              return (
-                <span
-                  key={`${index}-${i}`}
-                  style={{ color: isCorrect ? "orange" : "black" }}
-                >
-                  {char}
-                </span>
-              );
-            });
-          })}
+          {displayedRomanWord.map(({ char, isCorrect }, i) => (
+            <span key={i} style={{ color: isCorrect ? "orange" : "black" }}>
+              {char}
+            </span>
+          ))}
           <p>残り時間: {limitTime} 秒</p>
         </div>
       ) : (
