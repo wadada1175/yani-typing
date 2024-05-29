@@ -1,39 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import parseSentence from "@/app/data/romanTypingParseDictionary";
-
-const japaneseWordsList: string[] = []; // 初期単語リスト
-const romanWordsList: string[][][] = []; // 初期単語リスト
-const initRomanWordsList: string[][] = []; // 初期単語リスト
-const initialTime = 10; // 初期時間
-
-const JapaneseSentences = [
-  {
-    sentence: "きゅうきゅうしゃ",
-    hiragana: "きゅうきゅうしゃ",
-  },
-  {
-    sentence: "るんるん",
-    hiragana: "るんるん",
-  },
-];
-// JapaneseSentencesのhiraganaをparseして、romanWordsListに追加する
-JapaneseSentences.forEach((item, i) => {
-  japaneseWordsList.push(item.sentence);
-  const parsed = parseSentence(item.hiragana);
-  romanWordsList.push(parsed);
-});
-console.log(romanWordsList);
-// 初期値の設定
-romanWordsList.forEach((item, i) => {
-  const word: string[] = [];
-  item.forEach((el, j) => {
-    const char: string = el[0];
-    word.push(char);
-  });
-  initRomanWordsList.push(word);
-  console.log(initRomanWordsList);
-});
+import {
+  japaneseWordsList,
+  romanWordsList,
+  initialTime,
+} from "@/utils/initializeData";
 
 const useGameLogic = () => {
   const [japaneseWords, setJapaneseWords] = useState<string[]>([]);
@@ -54,6 +25,7 @@ const useGameLogic = () => {
   const [averageTypes, setAverageTypes] = useState<number>(0);
   const [startScreen, setStartScreen] = useState<boolean>(false);
   const [currentInput, setCurrentInput] = useState<string>("");
+  const [correctlyTypedCharacters, setCorrectlyTypedCharacters] = useState<string>("");
 
   // ゲームが終了したときに平均キータイプ数を計算する
   useEffect(() => {
@@ -84,13 +56,14 @@ const useGameLogic = () => {
 
       const nextCharOptions = currentRomanWord[currentPosition];
       const newInput = currentInput + event.key;
-
+      
       if (nextCharOptions.some((option) => option.startsWith(newInput))) {
+        setCorrectlyTypedCharacters((prev) => prev + event.key);
         setCurrentInput(newInput);
         if (nextCharOptions.includes(newInput)) {
           const nextPosition = currentPosition + 1;
           setCurrentPosition(nextPosition);
-          setCurrentInput(""); // 正しく入力されたら入力をリセット
+          setCurrentInput(''); // 正しく入力されたら入力をリセット
           setMistakeMade(false);
           // 正しく入力された文字数を記録する
           setTrueTotalTypes((prevTotal) => prevTotal + 1);
@@ -107,7 +80,6 @@ const useGameLogic = () => {
         setMistakeMade(true);
         // 間違った文字数を記録する
         setMistakeTotalTypes((prevTotal) => prevTotal + 1);
-        setCurrentInput(""); // 間違った場合も入力をリセット
       }
 
       // ESCキーを押すとゲームをリセットする
@@ -153,6 +125,7 @@ const useGameLogic = () => {
       setRomanWords(romanWords.slice(1));
       setCurrentPosition(0);
       setMistakeMade(false);
+      setCorrectlyTypedCharacters("");
     } else {
       setGameOver(true);
     }
@@ -183,6 +156,9 @@ const useGameLogic = () => {
   useEffect(() => {
     const handleEnterOrSpace = (event: KeyboardEvent) => {
       if (!startScreen && gameStarted) return;
+      if (gameOver) return;
+      if (gameStarted) return;
+      if (!startScreen && !gameOver && !gameStarted) return;
       if (event.key === "Enter" || event.key === " ") {
         startGame();
       }
@@ -190,7 +166,7 @@ const useGameLogic = () => {
 
     window.addEventListener("keydown", handleEnterOrSpace);
     return () => window.removeEventListener("keydown", handleEnterOrSpace);
-  }, [startScreen, gameStarted]);
+  }, [startScreen, gameStarted, gameOver]);
 
   // ゲームを開始する(初期化)
   const startGame = () => {
@@ -212,6 +188,7 @@ const useGameLogic = () => {
     setMistakeTotalTypes(0);
     setTotalSpentTime(initialTime);
     setTotalTime(initialTime);
+    setCorrectlyTypedCharacters("");
   };
 
   // ゲームを再開する
@@ -239,6 +216,7 @@ const useGameLogic = () => {
     goToStartScreen,
     goToInitScreen,
     currentInput, // currentInputをここで返す
+    correctlyTypedCharacters
   };
 };
 

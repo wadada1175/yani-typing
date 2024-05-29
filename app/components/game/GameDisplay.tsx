@@ -18,6 +18,7 @@ const GameDisplay = () => {
     goToStartScreen,
     goToInitScreen,
     currentInput, // currentInputをここで取得
+    correctlyTypedCharacters
   } = useGameLogic();
 
   // currentRomanWordの表示をユーザーの入力に基づいて動的に変更
@@ -52,11 +53,14 @@ const GameDisplay = () => {
         <div style={{ fontSize: "24px" }}>
           <span>{currentJapaneseWord}</span>
           <br />
-          {displayedRomanWord.map(({ char, isCorrect }, i) => (
-            <span key={i} style={{ color: isCorrect ? "orange" : "black" }}>
-              {char}
-            </span>
-          ))}
+          <div style={{ display: "flex" }}>
+            <p style={{ color: 'orange'}}>{ correctlyTypedCharacters }</p>
+            {displayedRomanWord.map(({ char, isCorrect }, i) => (
+              <span key={i} style={{ display: isCorrect ? "none" : "" }}>
+                {char}
+              </span>
+            ))}
+          </div>
           <p>残り時間: {limitTime} 秒</p>
         </div>
       ) : (
